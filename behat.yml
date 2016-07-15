@@ -1,0 +1,9 @@
+default:
+    suites:
+        default:
+            paths:    ['%paths.base%/features']
+
+    extensions:
+        Ingresse\Behat\ApiExtension\Extension:
+            base_uri: localhost
+

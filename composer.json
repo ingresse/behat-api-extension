@@ -1,0 +1,31 @@
+{
+    "name": "ingresse/behat-api-extension",
+    "type": "ingresse-behat-api-extension",
+    "description": "Ingresse API Extension for Behat",
+    "keywords": ["behat", "api", "test", "ingresse"],
+    "homepage": "http://dev.ingresse.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ingresse",
+            "email": "comunidade@ingresse.com",
+            "homepage": "http://dev.ingresse.com/",
+            "role": "Developer"
+        },
+        {
+            "name": "Fernando Dias",
+            "email": "fernando.dias@ingresse.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+        "behat/behat": "~3.0",
+        "guzzlehttp/guzzle": "6",
+        "phpunit/phpunit": "4 - 5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ingresse\\Behat\\ApiExtension\\": "src/BehatApiExtension"
+        }
+    }
+}
