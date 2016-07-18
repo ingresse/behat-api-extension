@@ -11,19 +11,19 @@ class ApiContext
     /**
      * @var array
      */
-    private $headers = [];
+    protected $headers = [];
     /**
      * @var array
      */
-    private $placeHolders = [];
+    protected $placeHolders = [];
     /**
      * @var \Psr\Http\Message\RequestInterface
      */
-    private $request;
+    protected $request;
     /**
      * @var \Psr\Http\Message\ResponseInterface|ResponseInterface
      */
-    private $response;
+    protected $response;
 
     use RequestContextTrait;
 

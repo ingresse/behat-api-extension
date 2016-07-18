@@ -35,7 +35,7 @@ trait AssertContextTrait
      */
     public function responseFieldContains($field, $value)
     {
-        Assertions::assertRegExp(
+        Assert::assertRegExp(
             '/' . preg_quote($value) . '/i',
             $this->getResponseField($field)
         );
@@ -46,7 +46,7 @@ trait AssertContextTrait
      */
     public function responseDataFieldContains($field, $value)
     {
-        Assertions::assertRegExp(
+        Assert::assertRegExp(
             '/' . preg_quote($value) . '/i',
             $this->getResponseDataField($field)
         );
@@ -57,7 +57,7 @@ trait AssertContextTrait
      */
     public function responseFieldIsNotEmpty($field)
     {
-        Assertions::assertNotEmpty($this->getResponseField($field));
+        Assert::assertNotEmpty($this->getResponseField($field));
     }
 
     /**
@@ -65,7 +65,7 @@ trait AssertContextTrait
      */
     public function responseDataFieldIsNotEmpty($field)
     {
-        Assertions::assertNotEmpty($this->getResponseDataField($field));
+        Assert::assertNotEmpty($this->getResponseDataField($field));
     }
 
     /**
@@ -129,7 +129,7 @@ trait AssertContextTrait
     /**
      * @return array
      */
-    private function getResponse()
+    protected function getResponse()
     {
         return json_decode((string)$this->response->getBody(), true);
     }
@@ -137,7 +137,7 @@ trait AssertContextTrait
     /**
      * @return array
      */
-    private function getResponseData()
+    protected function getResponseData()
     {
         return $this->getResponse()['data'];
     }
@@ -146,7 +146,7 @@ trait AssertContextTrait
      * @param  string $field
      * @return mixed
      */
-    private function getResponseField($field)
+    protected function getResponseField($field)
     {
         return $this->getField($this->getResponse(), $field);
     }
@@ -155,7 +155,7 @@ trait AssertContextTrait
      * @param  string $field
      * @return mixed
      */
-    private function getResponseDataField($field)
+    protected function getResponseDataField($field)
     {
         return $this->getField($this->getResponseData(), $field);
     }
@@ -165,7 +165,7 @@ trait AssertContextTrait
      * @param  string $fields
      * @return mixed
      */
-    private function getField($data, $fields)
+    protected function getField($data, $fields)
     {
         $fieldList = explode('.', $fields);
 
@@ -182,7 +182,7 @@ trait AssertContextTrait
      * @param  string $value
      * @return boolean
      */
-    private function assertTypeValue($field, $type, $value)
+    protected function assertTypeValue($field, $type, $value)
     {
         $realValue = null;
         switch ($type) {

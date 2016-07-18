@@ -5,5 +5,4 @@ default:
 
     extensions:
         Ingresse\Behat\ApiExtension\Extension:
-            base_uri: localhost
-
+            base_uri: http://localhost

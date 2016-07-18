@@ -10,42 +10,64 @@ use GuzzleHttp\Exception\RequestException;
 trait RequestContextTrait
 {
     /**
-     * @param string $url    relative url
+     * @param string $uri    relative uri
      *
-     * @When I make request to :arg1
+     * @When I make request to :uri
      */
-    public function iMakeRequest($uri)
+    public function iMakeGetRequest($uri)
     {
-        $uri           = $this->prepareUrl($uri);
+        $uri           = $this->prepareUri($uri);
         $this->request = new Request('GET', $uri, $this->headers);
         $this->sendRequest();
     }
 
     /**
-     * @param string       $method request method
-     * @param string       $url    relative url
-     * @param PyStringNode $post   request body
-     *
-     * @When /^I make "([A-Z]+)" request to "([^"]+)" with json data:$/
+     * @When I request :requestInfo
      */
-    public function iMakeRequestWithJson($method, $url, PyStringNode $json)
+    public function iMakeRequest($request, PyStringNode $json)
     {
-        $url           = $this->prepareUrl($url);
-        $string        = $this->replacePlaceHolder(trim($string));
-        $this->request = new Request($method, $url, $this->headers, $string);
+        $method = 'GET';
+        $uri    = '/';
+
+        list($method, $uri) = explode(" ", $request);
+
+        $uri  = $this->prepareUri($uri);
+
+        if ($method != 'GET') {
+            $json = $this->prepareJson($json);
+        }
+
+        $this->request = new Request($method, $uri, $this->headers, $json);
+        $this->sendRequest();
+    }
+
+    /**
+     * @param string       $method request method
+     * @param string       $uri    relative uri
+     * @param PyStringNode $json   request body
+     *
+     * @When I make :method request to :uri with json data:
+     */
+    public function iMakeRequestWithJson($method, $uri, PyStringNode $json)
+    {
+        $uri           = $this->prepareUri($uri);
+        $jsonHeader    = ['Content-Type' => 'application/json'];
+        $json          = $this->prepareJson(trim($json));
+        $headers       = array_merge($this->headers, $jsonHeader);
+        $this->request = new Request($method, $uri, $headers, $json);
         $this->sendRequest();
     }
 
     /**
      * @param string    $method request method
-     * @param string    $url    relative url
+     * @param string    $uri    relative uri
      * @param TableNode $post   table of post values
      *
-     * @When /^I make "([A-Z]+)" request to "([^"]+)" with form data:$/
+     * @When I make :method request to :uri with form data:
      */
-    public function iMakeRequestWithForm($method, $url, TableNode $post)
+    public function iMakeRequestWithForm($method, $uri, TableNode $post)
     {
-        $url        = $this->prepareUrl($url);
+        $uri        = $this->prepareUri($uri);
         $formHeader = ['Content-Type' => 'application/x-www-form-urlencoded'];
         $headers    = array_merge($this->headers, $formHeader);
         $fields     = '';
@@ -54,7 +76,7 @@ trait RequestContextTrait
             $fields .= sprintf('%s=%s', $item['field'], $item['value']);
         }
 
-        $this->request = new Request($method, $url, $headers, $fields);
+        $this->request = new Request($method, $uri, $headers, $fields);
         $this->sendRequest();
     }
 
@@ -62,45 +84,77 @@ trait RequestContextTrait
      * @param string $name  header name
      * @param string $value header value
      *
-     * @Given /^I set header "([^"]*)" with value "([^"]*)"$/
+     * @Given I set header :name with value :value
      */
     public function iSetHeaderWithValue($name, $value)
     {
         $this->addHeader($name, $value);
     }
 
-    private function sendRequest()
+    /**
+     * @return boolean
+     */
+    protected function sendRequest()
     {
         try {
             $this->response = $this->client->send($this->request);
+            return true;
         } catch (RequestException $e) {
             $this->response = $e->getResponse();
-
-            if (null === $this->response) {
-                throw $e;
-            }
         }
+
+        if (null === $this->response) {
+            throw $e;
+        }
+
+        return false;
     }
 
     /**
-     * @param  string $url
+     * @param  string $uri
      * @return string
      */
-    private function prepareUrl($url)
+    protected function prepareUri($uri)
     {
-        foreach ($this->placeHolders as $key => $val) {
-            $url = str_replace($key, $val, $url);
-        }
-
-        return ltrim($url, '/');
+        return ltrim($this->prepareData($uri), '/');
     }
 
     /**
-     * @param string $key   token name
-     * @param string $value replace value
+     * @param  string $json
+     * @return string
+     */
+    protected function prepareJson($json)
+    {
+        return ltrim($this->prepareData($json));
+    }
+
+    /**
+     * @param  string $data
+     * @return string
+     */
+    protected function prepareData($data)
+    {
+        foreach ($this->placeHolders as $key => $val) {
+            $data = str_replace(sprintf('{%s}', $key), $val, $data);
+        }
+        return $data;
+    }
+
+    /**
+     * @param string $key
+     * @param string $value
      */
     public function setPlaceHolder($key, $value)
     {
         $this->placeHolders[$key] = $value;
+    }
+
+    /**
+     * @param string $header
+     * @param string $value
+     */
+    public function addHeader($header, $value)
+    {
+        $this->headers[$header] = $value;
     }
 }
