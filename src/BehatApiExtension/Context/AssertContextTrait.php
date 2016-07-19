@@ -87,7 +87,7 @@ trait AssertContextTrait
     }
 
     /**
-     * @Then response :field is true
+     * @Then response :field is boolean true
      */
     public function responseFieldIsTrue($field)
     {
@@ -95,7 +95,7 @@ trait AssertContextTrait
     }
 
     /**
-     * @Then response :field is false
+     * @Then response :field is boolean false
      */
     public function responseFieldIsFalse($field)
     {

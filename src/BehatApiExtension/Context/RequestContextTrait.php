@@ -92,6 +92,18 @@ trait RequestContextTrait
     }
 
     /**
+     * @param string $key
+     * @param string $resource
+     *
+     * @Given I have :key of :resource from response
+     */
+    public function iHaveKeyFromResponse($key, $resource)
+    {
+        $placeholderKey                      = $resource . ucfirst($key);
+        $this->placeholders[$placeholderKey] = $this->getResponseField($key);
+    }
+
+    /**
      * @return boolean
      */
     protected function sendRequest()
@@ -134,7 +146,7 @@ trait RequestContextTrait
      */
     protected function prepareData($data)
     {
-        foreach ($this->placeHolders as $key => $val) {
+        foreach ($this->placeholders as $key => $val) {
             $data = str_replace(sprintf('{%s}', $key), $val, $data);
         }
         return $data;
@@ -144,9 +156,9 @@ trait RequestContextTrait
      * @param string $key
      * @param string $value
      */
-    public function setPlaceHolder($key, $value)
+    public function setPlaceholder($key, $value)
     {
-        $this->placeHolders[$key] = $value;
+        $this->placeholders[$key] = $value;
     }
 
     /**

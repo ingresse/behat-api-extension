@@ -15,7 +15,7 @@ class ApiContext
     /**
      * @var array
      */
-    protected $placeHolders = [];
+    protected $placeholders = [];
     /**
      * @var \Psr\Http\Message\RequestInterface
      */
