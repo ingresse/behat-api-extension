@@ -24,7 +24,7 @@ trait RequestContextTrait
     /**
      * @When I request :requestInfo
      */
-    public function iMakeRequest($request, PyStringNode $json)
+    public function iMakeRequest($request, PyStringNode $json = null)
     {
         $method = 'GET';
         $uri    = '/';
